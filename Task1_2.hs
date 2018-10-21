@@ -29,15 +29,14 @@ doesSquareBetweenExist from to = let
 -- вискокосных годов?
 isDateCorrect :: Integer -> Integer -> Integer -> Bool
 isDateCorrect day month year | day <= 0 || month <= 0 || year <= 0 = False
-                             | not (month `elem` monthes) = False
-                             | day `elem` [1 .. days !! (fromIntegral month - 1)] = True
+                             | fromIntegral month > 12 = False
+                             | day <= days !! (fromIntegral month - 1) = True
                              | isLeapFebruary year month && day == 29 = True
                              | otherwise = False
   where
     isLeapYear year = (year `rem` 4 == 0 && year `rem` 100 /= 0) || (year `rem` 400 == 0)
     isLeapFebruary year month = month == 2 && isLeapYear year
     days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    monthes = [1..12]
 
 -- возведение числа в степень, duh
 -- готовые функции и плавающую арифметику использовать нельзя
