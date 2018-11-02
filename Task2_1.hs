@@ -44,7 +44,7 @@ insert p@(k, v) f@(Fork l x r) | k == fst x = f
 
 -- Удаление элемента по ключу
 remove :: Integer -> TreeMap v -> TreeMap v
-remove i EmptyTree = error "EmptyTree"
+remove i EmptyTree = EmptyTree
 remove i l@(Leaf x)   | fst x == i = EmptyTree
                       | otherwise = l
 remove i (Fork l x r) | fst x == i = concatTrees l r
@@ -56,17 +56,17 @@ remove i (Fork l x r) | fst x == i = concatTrees l r
      concatTrees (Fork l x r) t = Fork l x (concatTrees r t)
 
 
+testTree = (Fork (Fork (Leaf (6, "as")) (7, "asd") (Leaf (8, "adasd"))) (10, "") (Fork (Leaf (12, "asd")) (15, "fsd") (Leaf (17, "asd"))))
+
+
 --Поиск ближайшего снизу ключа относительно заданного
 nearestLE :: Integer -> TreeMap v -> (Integer, v)
 nearestLE i EmptyTree = error "EmptyTree"
 nearestLE i (Leaf x) = error "Only one element in a tree"
 nearestLE i f@(Fork _ x _) = let (s1, s2) = execState (nearestLE' i f) (x, x)
-                             in if (fst s1 /= i)
-                                then error "There is no such a key"
-                                else if (fst s1 < fst s2)
-                                     then error $ "This is first key. "
-                                               <> "It doesn't have pred"
-                                     else s2
+                             in if fst s1 == fst s2
+                                then error "the key is < the lowest key in a tree"
+                                else s1
   where
     nearestLE' :: Integer -> TreeMap v -> State ((Integer, v), (Integer, v)) ()
     nearestLE' i EmptyTree = return ()

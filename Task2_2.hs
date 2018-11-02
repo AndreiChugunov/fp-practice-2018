@@ -73,6 +73,7 @@ groups lst n = unfoldr (\b -> if null b
                               else Just $ splitAt' n b) lst
 
 splitAt' :: Integer -> [a] -> ([a],[a])
-splitAt' n xs = (genericTake n xs, genericDrop n xs)
-  --unfoldr (Just . splitAt n) lst
-  --foldr (\x s -> splitAt n  ) (splitAt lst n)
+splitAt' n = snd . foldr (\x (c, p) -> if c >= 0
+                                 then (c-1, (fst p, x : snd p))
+                                 else (c-1, (x : fst p, snd p))
+                         ) (n, ([], []))
